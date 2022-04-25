@@ -4,4 +4,20 @@ let articlesURL = Root_URL + "articles";
 
 const tagsURL = Root_URL + "tags";
 
-export { Root_URL, articlesURL, tagsURL };
+const signupURL = Root_URL + "users";
+
+const loginURL = Root_URL + "users/login";
+
+const localStorageKey = "app_user";
+
+const userVerifyUrl = Root_URL + "user";
+
+export {
+  Root_URL,
+  articlesURL,
+  tagsURL,
+  signupURL,
+  loginURL,
+  localStorageKey,
+  userVerifyUrl,
+};
