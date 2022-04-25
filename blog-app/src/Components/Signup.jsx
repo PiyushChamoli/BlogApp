@@ -1,6 +1,7 @@
 import React from "react";
 import Validation from "../utils/validation/validation";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+import { signupURL } from "../utils/Const";
 
 class Signup extends React.Component {
   state = {
@@ -23,6 +24,26 @@ class Signup extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+    const { username, email, password } = this.state;
+    fetch(signupURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user: { username, password, email } }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then(({ errors }) => {
+            return Promise.reject(errors);
+          });
+        }
+        return res.json();
+      })
+      .then(({ user }) => {
+        this.props.updateUser(user);
+        this.setState({ username: "", email: "", password: "" });
+        this.props.history.push("/");
+      })
+      .catch((errors) => this.setState({ errors }));
   };
 
   render() {
@@ -62,7 +83,7 @@ class Signup extends React.Component {
             <span>{errors.password}</span>
             <input
               type="submit"
-              value="Login"
+              value="Signup"
               onClick={(event) => this.handleSubmit(event)}
               className="submit-btn"
             />
@@ -73,4 +94,4 @@ class Signup extends React.Component {
   }
 }
 
-export default Signup;
+export default withRouter(Signup);

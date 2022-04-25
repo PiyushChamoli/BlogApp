@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+import { loginURL } from "../utils/Const";
 import Validation from "../utils/validation/validation";
 
 class Login extends React.Component {
@@ -21,6 +22,35 @@ class Login extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+    const { email, password } = this.state;
+    fetch(loginURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user: { email, password } }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then(({ errors }) => {
+            return Promise.reject(errors);
+          });
+        }
+        return res.json();
+      })
+      .then(({ user }) => {
+        this.props.updateUser(user);
+        this.props.history.push("/");
+      })
+      .catch((errors) =>
+        this.setState((prevState) => {
+          return {
+            ...prevState,
+            errors: {
+              ...prevState.errors,
+              email: "Email or Password is incorrect",
+            },
+          };
+        })
+      );
   };
 
   render() {
@@ -62,4 +92,4 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+export default withRouter(Login);
