@@ -1,7 +1,7 @@
 import React from "react";
 import { articlesURL } from "../utils/Const";
 import Loader from "./Loader";
-import { NavLink } from "react-router-dom";
+import { NavLink, withRouter } from "react-router-dom";
 
 class Singlepost extends React.Component {
   state = {
@@ -36,7 +36,7 @@ class Singlepost extends React.Component {
           <div className="container">
             <h1>{article.title}</h1>
             <div className="flex justify-start align-center">
-              <img src={article.author.image} alt="icon"></img>
+              <img src={article.author.image || `logo512.png`} alt="icon"></img>
               <div className="article-user">
                 <h3>{article.author.username}</h3>
                 <p className="date">{article.createdAt.split("T")[0]}</p>
@@ -54,15 +54,19 @@ class Singlepost extends React.Component {
             ))}
           </ul>
           <hr className="hr" />
-          <h6 className="flex">
-            <NavLink to="/signup">Sign up </NavLink> or{" "}
-            <NavLink to="/login">Sign in</NavLink> to add comments on this
-            article.
-          </h6>
+          {this.props.user === null ? (
+            <h6 className="flex">
+              <NavLink to="/signup">Sign up </NavLink> or{" "}
+              <NavLink to="/login">Sign in</NavLink> to add comments on this
+              article.
+            </h6>
+          ) : (
+            ""
+          )}
         </div>
       </main>
     );
   }
 }
 
-export default Singlepost;
+export default withRouter(Singlepost);
