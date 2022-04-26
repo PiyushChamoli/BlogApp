@@ -1,45 +1,65 @@
-import { NavLink } from "react-router-dom";
+import React from "react";
+import { articlesURL } from "../utils/Const";
+import Posts from "./Posts";
+import ProfileBanner from "./ProfileBanner";
 
-function Profile() {
-  return (
-    <div className="container">
-      <div className="profile-hero">
-        <div>
-          <img src="/image/smiley.jpg" alt="profileimg" />
-          <h2>Username</h2>
-          <NavLink className="unselected btn" to="/settings">
-            <i class="fa fa-cog" aria-hidden="true"></i>&nbsp; Edit Profile
-            Settings
-          </NavLink>
+class Profile extends React.Component {
+  state = {
+    activeTab: "author",
+    articles: [],
+  };
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData = () => {
+    fetch(articlesURL + `/?${this.state.activeTab}=${this.props.user.username}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Cannot Fetch Data");
+        }
+        return res.json();
+      })
+      .then((data) => this.setState({ articles: data.articles }))
+      .catch((err) => this.setState({ error: "Not Able to fetch data" }));
+  };
+
+  handleActive = (tab) => {
+    this.setState({ activeTab: tab }, () => this.fetchData());
+  };
+
+  render() {
+    const { activeTab } = this.state;
+    const { user } = this.props;
+    return (
+      <div className="container profile">
+        <ProfileBanner user={user} />
+        <div className="article-heading">
+          <ul className="flex">
+            <li>
+              <button
+                className={activeTab === "author" ? "active p-btn" : "p-btn"}
+                onClick={() => this.handleActive("author")}
+              >
+                My Articles
+              </button>
+            </li>
+            <li>
+              <button
+                className={activeTab === "favorited" ? "active p-btn" : "p-btn"}
+                onClick={() => this.handleActive("favorited")}
+              >
+                Favourite Articles
+              </button>
+            </li>
+          </ul>
+          <hr />
+          <Posts articles={this.state.articles} />
         </div>
       </div>
-      <div className="article-heading">
-        <ul className="flex">
-          <li>
-            <NavLink
-              className={(isActive) =>
-                "active-nav" + (!isActive ? " unselected" : "")
-              }
-              to="/"
-            >
-              My Articles
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              className={(isActive) =>
-                "active-nav" + (!isActive ? " unselected" : "")
-              }
-              to="/"
-            >
-              Favourite Articles
-            </NavLink>
-          </li>
-        </ul>
-        <hr />
-      </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default Profile;

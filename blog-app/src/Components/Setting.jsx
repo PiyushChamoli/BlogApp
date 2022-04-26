@@ -1,11 +1,13 @@
 import React from "react";
+import { withRouter } from "react-router-dom";
+import { userVerifyUrl } from "../utils/Const";
 
 class Settings extends React.Component {
   state = {
-    url: "",
-    username: "",
     bio: "",
-    email: "",
+    image: "",
+    email: this.props.user.email,
+    username: this.props.user.username,
     password: "",
   };
 
@@ -17,6 +19,25 @@ class Settings extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+    const { bio, image, password, username, email } = this.state;
+    fetch(userVerifyUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Token ${this.props.user.token}`,
+      },
+      body: JSON.stringify({
+        user: { bio, image, password, username, email },
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Cannot create article");
+        }
+        return res.json();
+      })
+      .then((user) => this.props.history.push("/profile"))
+      .catch((errors) => this.setState({ errors }));
   };
 
   render() {
@@ -24,9 +45,9 @@ class Settings extends React.Component {
       <div className="container">
         <form onSubmit={this.handleSubmit}>
           <input
-            type="text"
-            name="url"
-            value={this.state.url}
+            type="url"
+            name="image"
+            value={this.state.image}
             onChange={this.handleInput}
             placeholder="URL of profile picture"
           />
@@ -36,6 +57,7 @@ class Settings extends React.Component {
             value={this.state.username}
             onChange={this.handleInput}
             placeholder="Username"
+            readOnly
           />
           <textarea
             name="bio"
@@ -48,8 +70,9 @@ class Settings extends React.Component {
             type="email"
             name="email"
             value={this.state.email}
-            onChange={this.handleInput}
+            // onChange={this.handleInput}
             placeholder="Enter Email"
+            readOnly
           />
           <input
             type="password"
@@ -58,17 +81,17 @@ class Settings extends React.Component {
             onChange={this.handleInput}
             placeholder="New Password"
           />
-          <button className="submit" type="submit">
+          <button className="submit" type="submit" onClick={this.handleSubmit}>
             Update Settings
           </button>
         </form>
         <hr />
-        <button className="logout" type="logout">
+        {/* <button className="logout" type="logout">
           Or click here to logout.
-        </button>
+        </button> */}
       </div>
     );
   }
 }
 
-export default Settings;
+export default withRouter(Settings);

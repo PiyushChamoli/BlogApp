@@ -523,8 +523,9 @@ textarea {
   width: 100%;
   margin: 0.5rem 0;
   padding: 0.6rem 1rem;
-  font-size: 1.3rem;
-  border: 1px solid #818a91;
+  font-size: 18px;
+  /* border: 1px solid #818a91; */
+  border: 1px solid #d2bab4;
   border-radius: 0.3rem;
   outline: none;
   color: #818a91;
@@ -544,7 +545,8 @@ textarea {
 }
 
 .submit:hover {
-  background-color: #367a36;
+  /* background-color: #367a36; */
+  opacity: 0.9;
 }
 
 .logout {
@@ -581,4 +583,22 @@ textarea {
   position: absolute;
   right: 10rem;
   bottom: 1rem;
+}
+
+.p-btn {
+  cursor: pointer;
+  background-color: white;
+  padding: 6px 0;
+  margin-right: 15px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #373a3c;
+}
+
+.p-btn:hover {
+  color: #d2bab4;
+}
+
+.profile .active {
+  border-bottom: 2px solid #5cb85c;
 }
