@@ -42,7 +42,7 @@ class Settings extends React.Component {
 
   render() {
     return (
-      <div className="container">
+      <div className="container setting">
         <form onSubmit={this.handleSubmit}>
           <input
             type="url"

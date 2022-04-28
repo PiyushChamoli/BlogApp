@@ -2,6 +2,8 @@ import React from "react";
 import { articlesURL } from "../utils/Const";
 import Loader from "./Loader";
 import { NavLink, withRouter } from "react-router-dom";
+import CommentBox from "./CommentBox";
+import Comments from "./Comments";
 
 class Singlepost extends React.Component {
   state = {
@@ -22,8 +24,33 @@ class Singlepost extends React.Component {
       .catch((err) => this.setState({ error: "Not able to fetch article" }));
   }
 
+  handleEdit = () => {
+    let slug = this.props.match.params.slug;
+    this.props.history.push(`/article/edit/${slug}`);
+  };
+
+  handleDelete = () => {
+    fetch(articlesURL + "/" + this.props.match.params.slug, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Token ${this.props.user.token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then(({ errors }) => {
+            return Promise.reject(errors);
+          });
+        }
+        this.props.history.push(`/`);
+      })
+      .catch((err) => console.log(err));
+  };
+
   render() {
     const { article, error } = this.state;
+    const isLoggedIn = this.props.isLoggedIn;
+    const loggedInUser = this.props.user.username;
     if (error) {
       return <h2>{error}</h2>;
     }
@@ -41,6 +68,18 @@ class Singlepost extends React.Component {
                 <h3>{article.author.username}</h3>
                 <p className="date">{article.createdAt.split("T")[0]}</p>
               </div>
+              {isLoggedIn && loggedInUser === article.author.username ? (
+                <div className="ed-btn flex">
+                  <button className="e-btn" onClick={this.handleEdit}>
+                    Edit
+                  </button>
+                  <button className="d-btn" onClick={this.handleDelete}>
+                    Delete
+                  </button>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
           </div>
         </div>
@@ -63,6 +102,18 @@ class Singlepost extends React.Component {
           ) : (
             ""
           )}
+          {this.props.isLoggedIn && (
+            <CommentBox
+              slug={this.props.match.params.slug}
+              token={this.props.user.token}
+            />
+          )}
+          <Comments
+            token={this.props.user.token}
+            slug={this.props.match.params.slug}
+            loggedInUser={this.props.user.username}
+            isLoggedIn={this.props.isLoggedIn}
+          />
         </div>
       </main>
     );

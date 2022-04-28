@@ -13,7 +13,12 @@ function Posts(props) {
   return (
     <>
       {props.articles.map((article, i) => (
-        <Post key={article.slug} article={article} />
+        <Post
+          key={article.slug}
+          article={article}
+          isLoggedIn={props.isLoggedIn}
+          handleFavorite={props.handleFavorite}
+        />
       ))}
     </>
   );
