@@ -5,6 +5,7 @@ import { articlesURL } from "../utils/Const";
 import Pagination from "./Pagination";
 import Sidebar from "./Sidebar";
 import FeedNav from "./FeedNav";
+import { withRouter } from "react-router-dom";
 
 class Home extends React.Component {
   state = {
@@ -65,6 +66,32 @@ class Home extends React.Component {
     this.setState({ activeTab: tag });
   };
 
+  handleFavorite = ({ target }) => {
+    let isLoggedIn = this.props.isLoggedIn;
+    let { id, slug } = target.dataset;
+    let method = id === "false" ? "POST" : "DELETE";
+    if (isLoggedIn) {
+      fetch(articlesURL + "/" + slug + "/favorite", {
+        method: method,
+        headers: {
+          Authorization: "Token " + this.props.user.token,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) {
+            return res.json().then(({ errors }) => {
+              return Promise.reject(errors);
+            });
+          }
+          return res.json();
+        })
+        .then((data) => {
+          this.props.history.push("/");
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   render() {
     return (
       <main>
@@ -75,7 +102,12 @@ class Home extends React.Component {
               activeTab={this.state.activeTab}
               removeTab={this.removeTab}
             />
-            <Posts articles={this.state.articles} error={this.state.error} />
+            <Posts
+              articles={this.state.articles}
+              error={this.state.error}
+              isLoggedIn={this.props.isLoggedIn}
+              handleFavorite={this.handleFavorite}
+            />
             <Pagination
               articlesCount={this.state.articlesCount}
               articlesPerPage={this.state.articlesPerPage}
@@ -92,4 +124,7 @@ class Home extends React.Component {
   }
 }
 
-export default Home;
+export default withRouter(Home);
+
+// 0135 7193435
+// 4th floor 3437

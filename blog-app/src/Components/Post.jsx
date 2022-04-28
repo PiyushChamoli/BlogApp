@@ -20,7 +20,20 @@ function Post(props) {
           </div>
         </div>
         <div>
-          <button>like 1</button>
+          <button
+            className={
+              props.isLoggedIn
+                ? article.favorited
+                  ? "ac-like"
+                  : "na-like"
+                : ""
+            }
+            data-id={article.favorited}
+            data-slug={article.slug}
+            onClick={props.handleFavorite}
+          >
+            Like: {article.favoritesCount}
+          </button>
         </div>
       </div>
       <div className="a-body">
@@ -30,7 +43,7 @@ function Post(props) {
           <Link to={`/article/${article.slug}`}>
             <span>Read More...</span>
           </Link>
-          <span>taglist</span>
+          <span></span> {/* For tagList */}
         </div>
       </div>
     </article>

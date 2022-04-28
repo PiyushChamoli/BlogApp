@@ -11,6 +11,7 @@ import Loader from "./Loader";
 import NewPost from "./NewPost";
 import Profile from "./Profile";
 import Setting from "./Setting";
+import UpdateArticle from "./UpdateArticle";
 
 class App extends React.Component {
   state = {
@@ -56,11 +57,15 @@ class App extends React.Component {
       <>
         <Header isLoggedIn={this.state.isLoggedIn} user={this.state.user} />
         {this.state.isLoggedIn ? (
-          <AunthenticationApp user={this.state.user} />
+          <AunthenticationApp
+            user={this.state.user}
+            isLoggedIn={this.state.isLoggedIn}
+          />
         ) : (
           <UnAuthenticationApp
             user={this.state.user}
             updateUser={this.updateUser}
+            isLoggedIn={this.state.isLoggedIn}
           />
         )}
       </>
@@ -72,7 +77,7 @@ function AunthenticationApp(props) {
   return (
     <Switch>
       <Route path="/" exact>
-        <Home />
+        <Home isLoggedIn={props.isLoggedIn} user={props.user} />
       </Route>
       <Route path="/new-post">
         <NewPost user={props.user} />
@@ -83,8 +88,11 @@ function AunthenticationApp(props) {
       <Route path="/setting">
         <Setting user={props.user} />
       </Route>
-      <Route path="/article/:slug">
-        <Singlepost user={props.user} />
+      <Route path="/article/edit/:slug" exact>
+        <UpdateArticle user={props.user} />
+      </Route>
+      <Route path="/article/:slug" exact>
+        <Singlepost user={props.user} isLoggedIn={props.isLoggedIn} />
       </Route>
       <Route path="*">
         <NoMatch />
@@ -97,7 +105,7 @@ function UnAuthenticationApp(props) {
   return (
     <Switch>
       <Route path="/" exact>
-        <Home />
+        <Home isLoggedIn={props.isLoggedIn} user={props.user} />
       </Route>
       <Route path="/login">
         <Login updateUser={props.updateUser} />
@@ -106,7 +114,7 @@ function UnAuthenticationApp(props) {
         <Signup updateUser={props.updateUser} />
       </Route>
       <Route path="/article/:slug">
-        <Singlepost user={props.user} />
+        <Singlepost user={props.user} isLoggedIn={props.isLoggedIn} />
       </Route>
       <Route path="*">
         <NoMatch />
